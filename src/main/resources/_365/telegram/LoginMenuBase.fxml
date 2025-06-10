@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="LoginMenu" maxHeight="720.0" maxWidth="1080.0" minHeight="720.0" minWidth="1080.0" prefHeight="720.0" prefWidth="1080.0" style="-fx-max-height: 720; -fx-min-height: 720; -fx-max-width: 1080; -fx-min-width: 1080; -fx-background-color: #17212B;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="_365.telegram.LoginController">
+   <children>
+      <ImageView id="HeaderImg" fitHeight="225.0" fitWidth="1080.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@media/HeaderImg.png" />
+         </image>
+      </ImageView>
+      <Label id="TitleTxt" alignment="CENTER" contentDisplay="CENTER" layoutX="430.0" layoutY="306.0" prefHeight="82.0" prefWidth="244.0" text="Telegram 365" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Ebrima Bold" size="24.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="376.0" prefHeight="54.0" prefWidth="393.0" text="Welcome to the official Telegram 365 desktop app.&#10;It's fast and secure.&#10;" textAlignment="CENTER" textFill="#567285">
+         <font>
+            <Font name="Ebrima" size="16.0" />
+         </font>
+      </Label>
+      <Button id="StartMsgButton" alignment="CENTER" contentDisplay="CENTER" layoutX="395.0" layoutY="461.0" mnemonicParsing="false" onAction="#SwitchLoginScene" prefHeight="42.0" prefWidth="309.0" style="-fx-background-color: #2f6ea5; -fx-background-radius: 7px;" text="Start Messaging" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Ebrima Bold" size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+   </children>
+</AnchorPane>
