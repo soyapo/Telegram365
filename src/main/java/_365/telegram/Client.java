@@ -7,17 +7,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Client extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
+        FXMLLoader BaseLoader = new FXMLLoader(Client.class.getResource("LoginMenuBase.fxml"));
+        Scene LoginMenuBase = new Scene(BaseLoader.load(), 1080, 720);
+        stage.setTitle("Telegram 365");
+        stage.setScene(LoginMenuBase);
         stage.show();
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
