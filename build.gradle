@@ -35,6 +35,9 @@ javafx {
 }
 
 dependencies {
+    implementation 'org.postgresql:postgresql:42.7.3' // درایور PostgreSQL JDBC
+    implementation 'org.mindrot:jbcrypt:0.4'          // کتابخانه BCrypt برای هش کردن رمز عبور
+
     implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
         exclude(group: 'org.openjfx')
     }
