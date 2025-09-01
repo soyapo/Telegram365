@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
@@ -35,6 +36,9 @@
          </font>
       </Label>
       <Line id="CountryFieldUnderline" fx:id="CountryFieldUnderline" endX="143.0" endY="0.4000244140625" layoutX="497.0" layoutY="338.0" startX="-101.0" startY="0.4000244140625" stroke="WHITE" />
-      <TextField id="PhoneField" fx:id="PhoneField" layoutX="396.0" layoutY="360.0" onMouseEntered="#MouseEnteredPhone" onMouseExited="#MouseExitedPhone" opacity="0.0" prefHeight="42.0" prefWidth="246.0" />
+      <TextField id="PhoneField" fx:id="PhoneField" layoutX="396.0" layoutY="360.0" onMouseEntered="#MouseEnteredPhone" onMouseExited="#MouseExitedPhone" opacity="0.0" prefHeight="42.0" prefWidth="246.0">
+         <effect>
+            <Glow />
+         </effect></TextField>
     </children>
 </AnchorPane>
