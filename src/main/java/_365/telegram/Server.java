@@ -1,5 +1,7 @@
 package _365.telegram;
 
+import _365.telegram.db.DatabaseManager;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -178,6 +180,7 @@ public class Server {
     }
 
     public static void main(String[] args) {
+        DatabaseManager.connect();
         Server server = new Server();
         server.start(12345);
     }

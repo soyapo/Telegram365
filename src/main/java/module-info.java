@@ -4,6 +4,7 @@ module _365.telegram {
 
     requires com.dlsc.formsfx;
     requires java.desktop;
+    requires java.sql;
 
     opens _365.telegram to javafx.fxml;
     exports _365.telegram;
