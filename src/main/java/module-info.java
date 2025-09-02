@@ -8,6 +8,4 @@ module _365.telegram {
 
     opens _365.telegram to javafx.fxml;
     exports _365.telegram;
-    exports _365.telegram.Login;
-    opens _365.telegram.Login to javafx.fxml;
 }

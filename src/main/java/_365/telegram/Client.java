@@ -1,4 +1,4 @@
-package _365.telegram.Login;
+package _365.telegram;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

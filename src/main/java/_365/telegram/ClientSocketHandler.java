@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-import _365.telegram.Chat.Message;
-
 public class ClientSocketHandler {
     private Socket socket;
     private ObjectOutputStream out;
