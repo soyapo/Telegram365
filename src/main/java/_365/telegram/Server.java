@@ -1,5 +1,8 @@
 package _365.telegram;
 
+import _365.telegram.Chat.Channel;
+import _365.telegram.Chat.Group;
+import _365.telegram.Chat.Message;
 import _365.telegram.db.DatabaseManager;
 
 import java.io.IOException;

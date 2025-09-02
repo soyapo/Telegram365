@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.UUID;
 
+import _365.telegram.Chat.Message;
+
 public class MainTestClient {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

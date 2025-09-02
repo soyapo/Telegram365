@@ -1,4 +1,4 @@
-package _365.telegram;
+package _365.telegram.Chat;
 
 import java.io.Serializable;
 import java.util.*;
