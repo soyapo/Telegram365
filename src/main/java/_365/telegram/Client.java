@@ -8,13 +8,31 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Client extends Application {
+    private Stage main_stage;
+    private ClientSocketHandler CSH;
+
     @Override
     public void start(Stage stage) throws IOException {
+        this.main_stage = stage;
+        this.CSH = new ClientSocketHandler();
+
+        boolean connected = CSH.connect("localhost", 12345);
+        if(!connected){
+            System.out.println("Failed");
+            return;
+        }
+
+        showLoginScene();
+    }
+
+    public void showLoginScene() throws IOException {
         FXMLLoader BaseLoader = new FXMLLoader(Client.class.getResource("LoginMenuBase.fxml"));
-        Scene LoginMenuBase = new Scene(BaseLoader.load(), 1080, 720);
-        stage.setTitle("Telegram 365");
-        stage.setScene(LoginMenuBase);
-        stage.show();
+        main_stage.setScene(new Scene(BaseLoader.load()));
+        LoginController controller = BaseLoader.getController();
+        controller.initSocketHandler(CSH);
+        main_stage.setTitle("Telegram 365");
+        //stage.setScene(LoginMenuBase);
+        main_stage.show();
     }
 
     public static void main(String[] args) {

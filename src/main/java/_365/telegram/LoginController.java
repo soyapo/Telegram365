@@ -14,6 +14,12 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class LoginController {
+    private ClientSocketHandler CSH;
+
+    public void initSocketHandler(ClientSocketHandler handler) {
+        this.CSH = handler;
+    }
+
     public void SwitchLoginScene(ActionEvent event) throws IOException {
         Parent VerificationRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginMenuVerification.fxml")));
         Stage VerificationStage = (Stage)((Node)event.getSource()).getScene().getWindow();
