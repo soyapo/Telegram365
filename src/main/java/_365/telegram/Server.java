@@ -5,11 +5,12 @@ import _365.telegram.db.DatabaseManager;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Instant;
 import java.util.*;
 
 public class Server {
     private final List<ClientHandler> clients = new ArrayList<>();
-    private final Map<String, String> pendingCodes = new HashMap<>();
+    private static final Map<String, String> pendingCodes = new HashMap<>();
     private final Map<String, User> usersByPhone = new HashMap<>();
     private final Map<String, ClientHandler> onlineUsers = new HashMap<>();
     private final Map<UUID, Group> groupsById = new HashMap<>();
@@ -38,8 +39,9 @@ public class Server {
         return usersByPhone.containsKey(phone);
     }
 
-    public synchronized String generateVerificationCode(String phone) {
-        String code = String.valueOf((int) (Math.random() * 9000 + 1000));
+    public static synchronized String generateVerificationCode(String phone) {
+        Random generator = new Random(Instant.now().toEpochMilli());
+        String code = String.valueOf((int) ((Math.abs(generator.nextInt() % 9000)) + 1000));
         pendingCodes.put(phone, code);
         System.out.println("[Server] Verification code for " + phone + ": " + code);
         return code;
