@@ -15,12 +15,12 @@
                 <Font name="Ebrima Bold" size="16.0" />
             </font>
         </Label>
-        <Label contentDisplay="CENTER" layoutX="395.0" layoutY="206.0" prefHeight="54.0" prefWidth="393.0" text="Please enter your phone number to&#10;continue the verification process." textFill="#567285">
+        <Label contentDisplay="CENTER" disable="true" layoutX="395.0" layoutY="206.0" prefHeight="54.0" prefWidth="393.0" text="Please enter your phone number to&#10;continue the verification process." textFill="#567285">
             <font>
                 <Font name="Ebrima" size="14.0" />
             </font>
         </Label>
-        <Button id="VerifyButton" alignment="CENTER" contentDisplay="CENTER" layoutX="395.0" layoutY="461.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="309.0" style="-fx-background-color: #2f6ea5; -fx-background-radius: 7px;" text="Next" textAlignment="CENTER" textFill="WHITE">
+        <Button id="VerifyButton" fx:id="NEXT" alignment="CENTER" contentDisplay="CENTER" layoutX="395.0" layoutY="461.0" mnemonicParsing="false" onAction="#SubmitNumber" prefHeight="42.0" prefWidth="309.0" style="-fx-background-color: #2f6ea5; -fx-background-radius: 7px;" text="Next" textAlignment="CENTER" textFill="WHITE">
             <font>
                 <Font name="Ebrima Bold" size="14.0" />
             </font>
@@ -28,13 +28,16 @@
                 <Cursor fx:constant="HAND" />
             </cursor>
         </Button>
-      <Line id="PhoneFieldUnderline" fx:id="PhoneFieldUnderline" endX="143.0" endY="0.4000244140625" layoutX="497.0" layoutY="401.0" startX="-101.0" startY="0.4000244140625" stroke="WHITE" />
-      <Label id="CountryField" fx:id="CountryField" contentDisplay="CENTER" layoutX="396.0" layoutY="296.0" onMouseEntered="#MouseEnteredCountry" onMouseExited="#MouseExitedCountry" prefHeight="42.0" prefWidth="244.0" text="Iran (+98)" textFill="WHITE">
+      <Line id="PhoneFieldUnderline" fx:id="PhoneFieldUnderline" endX="143.0" endY="0.4000244140625" layoutX="497.0" layoutY="405.0" startX="-101.0" startY="0.4000244140625" stroke="WHITE" />
+      <TextField id="PhoneField" fx:id="PhoneField" layoutX="396.0" layoutY="360.0" onMouseEntered="#MouseEnteredPhone" onMouseExited="#MouseExitedPhone" prefHeight="42.0" prefWidth="246.0" promptText="ex 9123456789" style="-fx-background-color: #17212B; -fx-text-fill: #ffffff;">
+         <font>
+            <Font name="Ebrima Bold" size="16.0" />
+         </font></TextField>
+      <Line id="PhoneFieldUnderline" fx:id="CountryFieldUnderline" endX="143.0" endY="0.4000244140625" layoutX="497.0" layoutY="343.0" startX="-101.0" startY="0.4000244140625" stroke="WHITE" />
+      <TextField id="PhoneField" fx:id="CountryField" editable="false" layoutX="396.0" layoutY="298.0" onMouseEntered="#MouseEnteredCountry" onMouseExited="#MouseExitedCountry" prefHeight="42.0" prefWidth="246.0" style="-fx-background-color: #17212B; -fx-text-fill: #ffffff;" text="Iran (+98)">
          <font>
             <Font name="Ebrima Bold" size="16.0" />
          </font>
-      </Label>
-      <Line id="CountryFieldUnderline" fx:id="CountryFieldUnderline" endX="143.0" endY="0.4000244140625" layoutX="497.0" layoutY="338.0" startX="-101.0" startY="0.4000244140625" stroke="WHITE" />
-      <TextField id="PhoneField" fx:id="PhoneField" layoutX="396.0" layoutY="360.0" onMouseEntered="#MouseEnteredPhone" onMouseExited="#MouseExitedPhone" opacity="0.0" prefHeight="42.0" prefWidth="246.0" />
+      </TextField>
     </children>
 </AnchorPane>

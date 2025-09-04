@@ -1,0 +1,79 @@
+package _365.telegram.db;
+
+import java.sql.*;
+import java.util.UUID;
+
+public class UserDao {
+
+    public static boolean insertUser(String phone, String username, String bio, String profilePicture) {
+        String sql = "INSERT INTO users (id, phone, username, bio, profile_picture) VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            UUID userId = UUID.randomUUID();
+            stmt.setObject(1, userId);
+            stmt.setString(2, phone);
+            stmt.setString(3, username);
+            stmt.setString(4, bio);
+            stmt.setString(5, profilePicture);
+            stmt.executeUpdate();
+            System.out.println("user inserted with ID: " + userId);
+            return true;
+        } catch (SQLException e) {
+            System.err.println("failed to insert user: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static UUID getUserIdByPhone(String phone) {
+        String sql = "SELECT id FROM users WHERE phone = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return (UUID) rs.getObject("id");
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserIdByPhone failed: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static String getUsernameById(UUID userId) {
+        String sql = "SELECT username FROM users WHERE id = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setObject(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            }
+        } catch (SQLException e) {
+            System.err.println("getUsernameById failed: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static boolean phoneNumberExists (String phone) {
+        //DatabaseManager.connect();
+        String sql = "SELECT 1 FROM users WHERE phone = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("phoneNumberExists failed: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean usernameExists (String username) {
+        String sql = "SELECT 1 FROM users WHERE username = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("usernameExists failed: " + e.getMessage());
+        }
+        return false;
+    }
+}
