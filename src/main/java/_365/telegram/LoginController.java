@@ -75,13 +75,14 @@ public class LoginController {
         stage.show();
     }
 
-
     public void SubmitNumber(ActionEvent event) {
         PhoneInput = PhoneField.getText();
         if (PhoneInput.matches("^9\\d{9}$")) {
             try {
                 SwitchAuthScene(event);
-                ServerVerificationCode = Server.generateVerificationCode(PhoneInput);
+                CSH.sendMessage(new Message(PhoneInput, "SERVER", "", Message.MessageType.REGISTER_PHONE));
+                CSH.setOnMessageReceived(msg -> { ServerVerificationCode = msg.getContent(); });
+
                 ShowCodeScene();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -89,7 +90,6 @@ public class LoginController {
         } else
             PhoneFieldUnderline.setStroke(Color.RED);
     }
-
     public void VerifyCode(ActionEvent event) {
         UserVerificationCode = CodeField.getText();
         if(!UserVerificationCode.equals(ServerVerificationCode)){

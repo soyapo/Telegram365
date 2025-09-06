@@ -50,13 +50,13 @@ public class ClientHandler implements Runnable {
                 if (server.isPhoneRegistered(phone)) {
                     sendMessage(new Message("SERVER", phone,
                             "Phone number already registered", Message.MessageType.LOGIN_RESPONSE));
-                    socket.close();
+
                     return;
                 }
 
                 String code = server.generateVerificationCode(phone);
                 sendMessage(new Message("SERVER", phone,
-                        "Verification code sent (check server console)", Message.MessageType.LOGIN_RESPONSE));
+                        code, Message.MessageType.LOGIN_RESPONSE));
 
                 Message codeMsg = (Message) in.readObject();
                 if (codeMsg.getMessageType() != Message.MessageType.VERIFY_CODE ||
@@ -64,7 +64,7 @@ public class ClientHandler implements Runnable {
 
                     sendMessage(new Message("SERVER", phone,
                             "Invalid verification code", Message.MessageType.LOGIN_RESPONSE));
-                    socket.close();
+
                     return;
                 }
 
@@ -72,7 +72,7 @@ public class ClientHandler implements Runnable {
                 if (profileMsg.getMessageType() != Message.MessageType.SET_PROFILE) {
                     sendMessage(new Message("SERVER", phone,
                             "Invalid profile setup message", Message.MessageType.LOGIN_RESPONSE));
-                    socket.close();
+
                     return;
                 }
 
@@ -80,7 +80,7 @@ public class ClientHandler implements Runnable {
                 String inputUsername = profileParts[0].trim();
                 String bio = profileParts.length > 1 ? profileParts[1].trim() : "";
 
-                User newUser = new User(phone);
+                User newUser = new User(UUID.randomUUID(), inputUsername, phone, bio, "");
                 newUser.setUsername(inputUsername);
                 newUser.setBio(bio);
                 newUser.setStatus("Online");
@@ -96,7 +96,6 @@ public class ClientHandler implements Runnable {
             } else {
                 sendMessage(new Message("SERVER", null,
                         "Invalid initial request", Message.MessageType.SYSTEM));
-                socket.close();
                 return;
             }
 

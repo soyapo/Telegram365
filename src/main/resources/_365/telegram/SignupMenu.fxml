@@ -57,7 +57,7 @@
             <Insets left="10.0" />
          </padding>
       </Label>
-      <ImageView fx:id="FileChooseImageView" fitHeight="180.0" fitWidth="180.0" layoutX="692.0" layoutY="230.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-radius: 50%; -fx-background-radius: 50%;">
+      <ImageView fx:id="FileChooseImageView" fitHeight="180.0" fitWidth="180.0" layoutX="692.0" layoutY="230.0" pickOnBounds="true" style="-fx-border-radius: 50%; -fx-background-radius: 50%;">
          <effect>
             <Lighting>
                <bumpInput>
