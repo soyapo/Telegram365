@@ -1,6 +1,243 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #17212b;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #0e1621;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="_365.telegram.MainController">
+   <children>
+      <HBox fx:id="BigPFPContainer" alignment="CENTER" prefHeight="720.0" prefWidth="1080.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </HBox>
+      <VBox prefHeight="720.0" prefWidth="250.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="250.0" style="-fx-background-color: #17212b;">
+               <children>
+                  <ImageView fx:id="SideBarButton" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#OpenSideBar" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@media/MenuIcon.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+                  <TextField prefHeight="30.0" prefWidth="190.0" promptText="Search" style="-fx-background-radius: 15px; -fx-background-color: #242f3d;">
+                     <font>
+                        <Font name="Ebrima Bold" size="12.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+            </HBox>
+            <ListView prefHeight="660.0" prefWidth="250.0" style="-fx-background-color: #17212b;" />
+         </children>
+      </VBox>
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="210.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@media/Icons/search-12-32.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <VBox fx:id="SideBar" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="250.0" style="-fx-background-color: #17212b;">
+         <children>
+            <ImageView fx:id="SideBarButton1" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#CloseSideBar" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@media/MenuIcon.png" />
+               </image>
+               <VBox.margin>
+                  <Insets right="200.0" top="15.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="SideBarProfile" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </ImageView>
+            <Label fx:id="SideBarName" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="250.0" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Ebrima Bold" size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="40.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <HBox prefHeight="40.0" prefWidth="250.0">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="20.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@media/Icons/user-6-32.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="40.0" prefWidth="150.0" text="My Profile" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="250.0">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="20.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@media/Icons/group-32.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="40.0" prefWidth="150.0" text="New Group" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="250.0">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="20.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@media/Icons/megaphone-2-32.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="40.0" prefWidth="150.0" text="New Channel" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="250.0">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="20.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@media/Icons/contacts-32.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="40.0" prefWidth="150.0" text="Contacts" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="250.0">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="20.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@media/Icons/bookmark-5-32.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="40.0" prefWidth="150.0" text="Saved Messages" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="250.0">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="20.0" top="10.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@media/Icons/settings-19-32.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="40.0" prefWidth="150.0" text="Settings" textFill="WHITE">
+                     <font>
+                        <Font name="Ebrima Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

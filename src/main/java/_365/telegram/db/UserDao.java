@@ -2,10 +2,11 @@ package _365.telegram.db;
 
 import java.sql.*;
 import java.util.UUID;
+import _365.telegram.User;
 
 public class UserDao {
 
-    public static boolean insertUser(String phone, String username, String bio, String profilePicture) {
+    public static void insertUser(String phone, String username, String bio, String profilePicture) {
         String sql = "INSERT INTO users (id, phone, username, bio, profile_picture) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
@@ -17,11 +18,49 @@ public class UserDao {
             stmt.setString(5, profilePicture);
             stmt.executeUpdate();
             System.out.println("user inserted with ID: " + userId);
-            return true;
         } catch (SQLException e) {
             System.err.println("failed to insert user: " + e.getMessage());
-            return false;
         }
+    }
+
+    public static User getUserByPhone(String phone) {
+        String sql = "SELECT id, phone, username, bio, profile_picture FROM users WHERE phone = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, phone);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        UUID.fromString(rs.getString("id")),
+                        rs.getString("phone"),
+                        rs.getString("username"),
+                        rs.getString("bio"),
+                        rs.getString("profile_picture")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserByPhone failed: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static User getUserByID(UUID ID) {
+        String sql = "SELECT id, phone, username, bio, profile_picture FROM users WHERE id = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, ID.toString());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        UUID.fromString(rs.getString("id")),
+                        rs.getString("phone"),
+                        rs.getString("username"),
+                        rs.getString("bio"),
+                        rs.getString("profile_picture")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserByPhone failed: " + e.getMessage());
+        }
+        return null;
     }
 
     public static UUID getUserIdByPhone(String phone) {
