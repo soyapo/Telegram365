@@ -25,6 +25,7 @@ public class MainController {
         SideBarProfile.setImage(new Image("file:src/main/java/_365/telegram/Media/Profiles/" + user.getProfilePath()));
         Circle clip = new Circle(75, 75, 75);
         SideBarProfile.setClip(clip);
+        SideBarProfile.setOnMouseClicked(e -> {ShowBigImage("file:src/main/java/_365/telegram/Media/Profiles/" + user.getProfilePath());});
 
         SideBarName.setText(user.getUsername());
 
@@ -44,4 +45,14 @@ public class MainController {
     }
     @FXML private void CloseSideBar() { SideBar.toBack(); }
 
+    @FXML private HBox BigImageContainer;
+    @FXML private ImageView BigImage;
+    @FXML private void ShowBigImage(String Path){
+        BigImageContainer.toFront();
+        BigImage.setImage(new Image(Path));
+    }
+    @FXML private void HideBigImage(){
+        BigImage.setImage(null);
+        BigImageContainer.toBack();
+    }
 }

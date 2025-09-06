@@ -80,9 +80,7 @@ public class LoginController {
         if (PhoneInput.matches("^9\\d{9}$")) {
             try {
                 SwitchAuthScene(event);
-                CSH.sendMessage(new Message(PhoneInput, "SERVER", "", Message.MessageType.REGISTER_PHONE));
-                CSH.setOnMessageReceived(msg -> { ServerVerificationCode = msg.getContent(); });
-
+                ServerVerificationCode = Server.generateVerificationCode(PhoneInput);
                 ShowCodeScene();
             } catch (IOException e) {
                 e.printStackTrace();
