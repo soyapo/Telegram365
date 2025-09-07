@@ -14,69 +14,77 @@ public class ChatDao {
         List<ChatListItem> chatList = new ArrayList<>();
 
         String sql = """
-            SELECT
-                all_chats.chat_id,
-                all_chats.chat_name,
-                all_chats.chat_type,
-                all_chats.last_message_content,
-                u.username AS last_message_sender_name,
-                all_chats.last_message_timestamp
-            FROM (
-                SELECT
-                    CASE WHEN m.sender_id = ? THEN m.chat_id ELSE m.sender_id END AS chat_id,
-                    other_user.username AS chat_name,
-                    'private' AS chat_type,
-                    m.content AS last_message_content,
-                    m.sender_id AS last_message_sender_id,
-                    m.timestamp AS last_message_timestamp
-                FROM (
-                    SELECT DISTINCT ON (CASE WHEN sender_id = ? THEN chat_id ELSE sender_id END)
-                        *
-                    FROM messages
-                    WHERE chat_type = 'private' AND (sender_id = ? OR chat_id = ?)
-                    ORDER BY (CASE WHEN sender_id = ? THEN chat_id ELSE sender_id END), timestamp DESC
-                ) m
-                JOIN users other_user ON other_user.id = (CASE WHEN m.sender_id = ? THEN m.chat_id ELSE m.sender_id END)
+    SELECT
+        all_chats.receiver_id,
+        all_chats.chat_name,
+        all_chats.chat_type,
+        all_chats.last_message_content,
+        u.username AS last_message_sender_name,
+        all_chats.last_message_timestamp
+    FROM (
+        -- Private chats
+        SELECT
+            m.partner_id AS receiver_id,
+            u.username AS chat_name,
+            'private' AS chat_type,
+            m.content AS last_message_content,
+            m.sender_id AS last_message_sender_id,
+            m.timestamp AS last_message_timestamp
+        FROM (
+            SELECT DISTINCT ON (partner_id)
+                *,
+                CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS partner_id
+            FROM messages
+            WHERE chat_type = 'private' AND (sender_id = ? OR receiver_id = ?)
+            ORDER BY partner_id, "timestamp" DESC
+        ) m
+        JOIN users u ON u.id = m.partner_id
 
-                UNION ALL
+        UNION ALL
 
-                SELECT
-                    g.id AS chat_id,
-                    g.name AS chat_name,
-                    'group' AS chat_type,
-                    m.content AS last_message_content,
-                    m.sender_id AS last_message_sender_id,
-                    m.timestamp AS last_message_timestamp
-                FROM (
-                    SELECT DISTINCT ON (chat_id)
-                        *
-                    FROM messages
-                    WHERE chat_type = 'group' AND chat_id IN (SELECT group_id FROM group_members WHERE user_id = ?)
-                    ORDER BY chat_id, timestamp DESC
-                ) m
-                JOIN groups g ON m.chat_id = g.id
+        -- Group chats
+        SELECT
+            g.id AS receiver_id,
+            g.name AS chat_name,
+            'group' AS chat_type,
+            m.content AS last_message_content,
+            m.sender_id AS last_message_sender_id,
+            m.timestamp AS last_message_timestamp
+        FROM (
+            SELECT DISTINCT ON (receiver_id)
+                *
+            FROM messages
+            WHERE chat_type = 'group'
+              AND receiver_id IN (SELECT group_id FROM group_members WHERE user_id = ?)
+            ORDER BY receiver_id, "timestamp" DESC
+        ) m
+        JOIN groups g ON m.receiver_id = g.id
 
-                UNION ALL
+        UNION ALL
 
-                SELECT
-                    c.id AS chat_id,
-                    c.name AS chat_name,
-                    'channel' AS chat_type,
-                    m.content AS last_message_content,
-                    m.sender_id AS last_message_sender_id,
-                    m.timestamp AS last_message_timestamp
-                FROM (
-                    SELECT DISTINCT ON (chat_id)
-                        *
-                    FROM messages
-                    WHERE chat_type = 'channel' AND chat_id IN (SELECT channel_id FROM channel_subscribers WHERE user_id = ?)
-                    ORDER BY chat_id, timestamp DESC
-                ) m
-                JOIN channels c ON m.chat_id = c.id
-            ) AS all_chats
-            JOIN users u ON u.id = all_chats.last_message_sender_id
-            ORDER BY all_chats.last_message_timestamp DESC;
-            """;
+        -- Channel chats
+        SELECT
+            c.id AS receiver_id,
+            c.name AS chat_name,
+            'channel' AS chat_type,
+            m.content AS last_message_content,
+            m.sender_id AS last_message_sender_id,
+            m.timestamp AS last_message_timestamp
+        FROM (
+            SELECT DISTINCT ON (receiver_id)
+                *
+            FROM messages
+            WHERE chat_type = 'channel'
+              AND receiver_id IN (SELECT channel_id FROM channel_subscribers WHERE user_id = ?)
+            ORDER BY receiver_id, "timestamp" DESC
+        ) m
+        JOIN channels c ON m.receiver_id = c.id
+    ) AS all_chats
+    JOIN users u ON u.id = all_chats.last_message_sender_id
+    ORDER BY all_chats.last_message_timestamp DESC;
+    """;
+
+
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -86,15 +94,12 @@ public class ChatDao {
             stmt.setObject(3, userId);
             stmt.setObject(4, userId);
             stmt.setObject(5, userId);
-            stmt.setObject(6, userId);
-            stmt.setObject(7, userId);
-            stmt.setObject(8, userId);
 
 
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                UUID chatId = (UUID) rs.getObject("chat_id");
+                UUID chatId = (UUID) rs.getObject("receiver_id");
                 String chatName = rs.getString("chat_name");
                 String chatType = rs.getString("chat_type");
                 String lastMessageContent = rs.getString("last_message_content");
