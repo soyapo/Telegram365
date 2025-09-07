@@ -36,6 +36,9 @@
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <Label fx:id="SideBarName" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="250.0" textAlignment="CENTER" textFill="WHITE">
                <font>
@@ -228,7 +231,7 @@
                   </TextField>
                </children>
             </HBox>
-            <ListView prefHeight="660.0" prefWidth="250.0" style="-fx-background-color: #17212b;" />
+            <ListView fx:id="ChatListContainer" prefHeight="660.0" prefWidth="250.0" style="-fx-background-color: #17212b;" />
          </children>
       </VBox>
       <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="210.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">

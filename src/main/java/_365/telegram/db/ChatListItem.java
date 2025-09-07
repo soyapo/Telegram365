@@ -45,12 +45,13 @@ public class ChatListItem {
         return lastMessageTimestamp;
     }
 
-    @Override
-    public String toString() {
+    public String Content() {
         return "ChatListItem{" +
+                "chatId=" + chatId.toString() + '\'' +
                 "chatName='" + chatName + '\'' +
                 ", chatType='" + chatType + '\'' +
                 ", lastMessageContent='" + lastMessageContent + '\'' +
+                ", lastMessageSenderName='" + lastMessageSenderName + '\'' +
                 ", lastMessageTimestamp=" + lastMessageTimestamp +
                 '}';
     }

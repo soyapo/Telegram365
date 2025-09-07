@@ -90,11 +90,10 @@ public class SignUpController {
                 FileChooseLabel.setStyle(PickerStyle + "RED;");
             } else {
                try{
-                   String SelectedExtension = pfp.getName().substring(pfp.getName().lastIndexOf("."));
-                   Path destination = destinationDir.resolve(Phone + SelectedExtension);
+                   Path destination = destinationDir.resolve(Phone + ".png");
                    Files.copy(pfp.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
 
-                   ProfilePath = Phone + SelectedExtension;
+                   ProfilePath = Phone + ".png";
 
                    Image img = new Image(destination.toUri().toString());
                    FileChooseImageView.setImage(img);
