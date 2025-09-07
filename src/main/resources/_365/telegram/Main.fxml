@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
@@ -10,6 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #0e1621;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="_365.telegram.MainController">
@@ -242,5 +244,290 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
+      <HBox fx:id="ChatBars" alignment="CENTER_LEFT" layoutX="250.0" prefHeight="720.0" prefWidth="830.0">
+         <children>
+            <VBox fx:id="CenterBar" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="530.0">
+               <children>
+                  <HBox prefHeight="60.0" prefWidth="530.0" style="-fx-background-color: #17212b; -fx-border-width: 0.5; -fx-border-color: #000000;">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="360.0">
+                           <children>
+                              <Label fx:id="CenterBarUsername" prefHeight="30.0" prefWidth="200.0" text="Username" textFill="WHITE">
+                                 <padding>
+                                    <Insets left="20.0" top="10.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="Ebrima Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="CenterBarStatus" prefHeight="30.0" prefWidth="200.0" style="-fx-text-fill: gray;" text="Status" textFill="WHITE">
+                                 <padding>
+                                    <Insets bottom="5.0" left="20.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="Ebrima" size="13.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </HBox.margin>
+                                 <image>
+                                    <Image url="@media/Icons/search-12-32.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@media/Icons/phone-2-32.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </HBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@media/Icons/speaker-32.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </HBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@media/Icons/icons8-three-dots-30.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </HBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <ListView prefHeight="610.0" prefWidth="530.0" style="-fx-background-color: null;" />
+                  <HBox prefHeight="50.0" prefWidth="530.0" style="-fx-background-color: #17212b; -fx-border-color: #000000; -fx-border-width: 0.5;">
+                     <children>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@media/Icons/attach-32.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="12.5" left="12.5" right="12.5" top="12.5" />
+                           </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                        <TextField fx:id="MessageBox" prefHeight="50.0" prefWidth="400.0" promptText="Write a message..." style="-fx-background-color: null; -fx-text-fill: #ffffff;">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </TextField>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <image>
+                              <Image url="@media/Icons/emoticon-53-32.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="12.5" left="12.5" right="12.5" top="12.5" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="SendMicButton" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#SendMessage" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <image>
+                              <Image url="@media/Icons/microphone-8-32.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="12.5" left="12.5" right="12.5" top="12.5" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox prefHeight="720.0" prefWidth="300.0" style="-fx-background-color: #17212b;">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="300.0">
+                     <children>
+                        <Label text="User Info" textFill="WHITE">
+                           <font>
+                              <Font name="Ebrima Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </HBox>
+                  <HBox prefHeight="150.0" prefWidth="300.0">
+                     <children>
+                        <ImageView fx:id="InfoBarProfile" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true">
+                           <HBox.margin>
+                              <Insets bottom="15.0" left="20.0" top="15.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <VBox prefHeight="150.0" prefWidth="170.0">
+                           <children>
+                              <Label fx:id="InfoBarUsername1" prefHeight="75.0" prefWidth="170.0" text="Usename" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima Bold" size="18.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="10.0" top="50.0" />
+                                 </padding>
+                              </Label>
+                              <Label fx:id="InfoBarStatus" prefHeight="75.0" prefWidth="170.0" style="-fx-text-fill: gray;" text="Status">
+                                 <font>
+                                    <Font name="Ebrima" size="13.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="50.0" left="10.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <Line endX="300.0" stroke="#242f3d" strokeWidth="10.0" />
+                  <VBox alignment="TOP_CENTER" prefHeight="240.0" prefWidth="300.0">
+                     <children>
+                        <HBox prefHeight="60.0" prefWidth="300.0">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets left="27.5" right="27.5" top="20.0" />
+                                 </HBox.margin>
+                                 <image>
+                                    <Image url="@media/Icons/info-2-32.png" />
+                                 </image>
+                              </ImageView>
+                              <VBox prefHeight="60.0" prefWidth="225.0">
+                                 <children>
+                                    <Label fx:id="InfoBarPhone" prefHeight="30.0" prefWidth="225.0" text="+98 922 317 0991" textFill="WHITE">
+                                       <font>
+                                          <Font name="Ebrima" size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="7.0" />
+                                       </padding>
+                                    </Label>
+                                    <Label prefHeight="30.0" prefWidth="225.0" style="-fx-text-fill: gray;" text="Mobile" textFill="WHITE">
+                                       <font>
+                                          <Font name="Ebrima" size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets bottom="7.0" />
+                                       </padding>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <VBox prefHeight="60.0" prefWidth="225.0">
+                           <VBox.margin>
+                              <Insets left="75.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label fx:id="InfoBarBio" prefHeight="30.0" prefWidth="225.0" text="This is a bio" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima" size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="7.0" />
+                                 </padding>
+                              </Label>
+                              <Label prefHeight="30.0" prefWidth="225.0" style="-fx-text-fill: gray;" text="Bio" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima" size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="7.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="60.0" prefWidth="225.0">
+                           <VBox.margin>
+                              <Insets left="75.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label fx:id="InfoBarUsername2" prefHeight="30.0" prefWidth="225.0" text="\@username" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima" size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="7.0" />
+                                 </padding>
+                              </Label>
+                              <Label prefHeight="30.0" prefWidth="225.0" style="-fx-text-fill: gray;" text="Username" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima" size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="7.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Line endX="300.0" layoutX="100.0" startX="100.0" strokeWidth="0.5">
+                           <VBox.margin>
+                              <Insets left="100.0" />
+                           </VBox.margin>
+                        </Line>
+                        <HBox prefHeight="59.0" prefWidth="300.0">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets left="27.5" right="27.5" top="20.0" />
+                                 </HBox.margin>
+                                 <image>
+                                    <Image url="@media/Icons/bell-2-32.png" />
+                                 </image>
+                              </ImageView>
+                              <Label prefHeight="60.0" prefWidth="150.0" text="Notifications" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ebrima" size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <CheckBox mnemonicParsing="false" prefHeight="15.0" prefWidth="15.0">
+                                 <HBox.margin>
+                                    <Insets left="29.1" top="21.2" />
+                                 </HBox.margin>
+                              </CheckBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Line endX="300.0" stroke="#242f3d" strokeWidth="10.0" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

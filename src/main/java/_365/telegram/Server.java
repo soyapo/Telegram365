@@ -12,7 +12,7 @@ public class Server {
     private final List<ClientHandler> clients = new ArrayList<>();
     private static final Map<String, String> pendingCodes = new HashMap<>();
     private final Map<String, User> usersByPhone = new HashMap<>();
-    private final Map<String, ClientHandler> onlineUsers = new HashMap<>();
+    private static final Map<String, ClientHandler> onlineUsers = new HashMap<>();
     private final Map<UUID, Group> groupsById = new HashMap<>();
     private final Map<UUID, Channel> channelsById = new HashMap<>();
     private final Map<String, UUID> userToGroupByInviteCode = new HashMap<>();
@@ -56,17 +56,17 @@ public class Server {
         pendingCodes.remove(phone);
     }
 
-    public synchronized void addOnlineUser(String username, ClientHandler handler) {
+    public synchronized static void addOnlineUser(String username, ClientHandler handler) {
         onlineUsers.put(username, handler);
     }
 
-    public synchronized void removeClient(ClientHandler handler) {
-        clients.remove(handler);
-        if (handler.getUsername() != null) {
-            onlineUsers.remove(handler.getUsername());
-            System.out.println(handler.getUsername() + " disconnected.");
-        }
-    }
+//    public synchronized void removeClient(ClientHandler handler) {
+//        clients.remove(handler);
+//        if (handler.getUsername() != null) {
+//            onlineUsers.remove(handler.getUsername());
+//            System.out.println(handler.getUsername() + " disconnected.");
+//        }
+//    }
 
     public synchronized UUID createGroup(String name, String owner, boolean isPublic) {
         Group group = new Group(name, owner, isPublic);

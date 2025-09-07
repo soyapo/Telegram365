@@ -4,6 +4,7 @@ import _365.telegram.db.ChatDao;
 import _365.telegram.db.ChatListItem;
 import _365.telegram.db.DatabaseManager;
 import _365.telegram.db.UserDao;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,12 +13,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 
 import java.awt.*;
@@ -26,6 +25,10 @@ import java.util.List;
 
 public class MainController {
     User user;
+    User RecUser;
+    String CurrentChatType;
+
+    private ClientSocketHandler CSH;
 
     @FXML private void initialize() {
         // -- connect to database to retrieve data --
@@ -34,6 +37,13 @@ public class MainController {
         // -- set user --
         user = UserDao.getUserByPhone(LoginController.GetPhoneInput());
         user.setStatus("Online");
+
+        CSH = SharedCSH.getClientSocketHandler();
+        if (CSH.connect("localhost", 12345)) {
+            CSH.setOnMessageReceived(this::handleIncomingMessage);
+        }
+
+        CSH.sendMessage(new Message(user.getUsername(),"SERVER", "", Message.MessageType.REGISTER_PHONE));
 
         // -- Sidebar init --
         SideBarProfile.setImage(new Image("file:src/main/java/_365/telegram/Media/Profiles/" + user.getProfilePath()));
@@ -51,7 +61,6 @@ public class MainController {
         }
 
         // -- Chatlist --
-
         List<ChatListItem> ActiveChats = ChatDao.getChatListForUser(user.getUserId());
         ChatListContainer.setStyle("-fx-background-color: #17212b;");
 
@@ -74,9 +83,31 @@ public class MainController {
             });
         }
 
+        // --centerbar init--
+
+        ChatBars.setVisible(false);
+        MessageBox.setOnKeyTyped(e -> {
+            String text = MessageBox.getText();
+            if(text.isEmpty())
+                SendMicButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/microphone-8-32.png").toExternalForm()));
+            else
+                SendMicButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/telegram-32.png").toExternalForm()));
+        });
+
+        clip = new Circle(60, 60, 60);
+        InfoBarProfile.setClip(clip);
+        InfoBarProfile.setOnMouseClicked(e -> {ShowBigImage("file:src/main/java/_365/telegram/Media/Profiles/" + RecUser.getProfilePath());});
+
 
         // -- Close database connection --
         DatabaseManager.close();
+    }
+
+    private void handleIncomingMessage(Message msg) {
+        // Always update UI on JavaFX thread
+        Platform.runLater(() -> {
+            System.out.println(msg.getSenderId() + ": " + msg.getContent());
+        });
     }
 
     @FXML private ListView<ChatListItem> ChatListContainer;
@@ -125,11 +156,13 @@ public class MainController {
         box.setPadding(new Insets(10));
         box.setStyle("-fx-background-color: #17212b;");
         box.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(textContainer, Priority.ALWAYS);
+        box.setHgrow(textContainer, Priority.ALWAYS);
         box.setCursor(Cursor.HAND);
 
         box.setOnMouseEntered(e -> box.setStyle("-fx-background-color: #232e3c;"));
         box.setOnMouseExited(e -> box.setStyle("-fx-background-color: #17212b;"));
+
+        box.setOnMouseClicked(e -> ShowChat(ReceiverPhone));
 
         DatabaseManager.close();
 
@@ -158,4 +191,54 @@ public class MainController {
         BigImage.setImage(null);
         BigImageContainer.toBack();
     }
+
+    // --center bar--
+    @FXML HBox ChatBars;
+    @FXML VBox CenterBar;
+
+    @FXML Label CenterBarUsername;
+    @FXML Label CenterBarStatus;
+
+    @FXML Label InfoBarBio;
+    @FXML Label InfoBarPhone;
+    @FXML Label InfoBarStatus;
+    @FXML Label InfoBarUsername1;
+    @FXML Label InfoBarUsername2;
+    @FXML ImageView InfoBarProfile;
+
+    @FXML TextField MessageBox;
+    @FXML ImageView SendMicButton;
+
+    @FXML private void ShowChat(String Phone){
+        DatabaseManager.connect();
+
+        RecUser = UserDao.getUserByPhone(Phone);
+
+        CenterBarUsername.setText(RecUser.getUsername());
+        CenterBarStatus.setText(RecUser.getStatus());
+
+        InfoBarBio.setText(RecUser.getBio());
+        InfoBarStatus.setText(RecUser.getStatus());
+        InfoBarPhone.setText("+98 " + Phone.substring(0, 3) + " " + Phone.substring(3, 6) + " " + Phone.substring(6, 10));
+        InfoBarUsername1.setText(RecUser.getUsername());
+        InfoBarUsername2.setText("@" + RecUser.getUsername());
+        InfoBarProfile.setImage(new Image("file:src/main/java/_365/telegram/Media/Profiles/" + Phone + ".png"));
+
+        ChatBars.setVisible(true);
+        DatabaseManager.close();
+    }
+
+    @FXML private void SendMessage(){
+        String Content = MessageBox.getText();
+
+        if(Content.isEmpty())
+            return;
+
+        CSH.sendMessage(new Message(user.getUsername(), RecUser.getUsername(), Content, Message.MessageType.PRIVATE));
+
+        MessageBox.setText(null);
+    }
+
+
+
 }
