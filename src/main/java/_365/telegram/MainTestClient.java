@@ -169,8 +169,8 @@ public class MainTestClient {
                     String fileName = Paths.get(filePath).getFileName().toString();
                     String type = Files.probeContentType(Paths.get(filePath));
 
-                    Message mediaMsg = new Message(username, to, caption, Message.MessageType.MEDIA, media, fileName, type);
-                    client.sendMessage(mediaMsg);
+                    //Message mediaMsg = new Message(username, to, caption, Message.MessageType.MEDIA, media, fileName, type);
+                    //client.sendMessage(mediaMsg);
                 }
 
                 else {

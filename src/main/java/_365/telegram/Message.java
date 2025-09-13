@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Message implements Serializable {
-    private final UUID messageId;
+    private UUID messageId;
     private final String senderId;
     private final String receiverId;
     private final String content;
     private final MessageType messageType;
-    private final LocalDateTime timestamp;
+    private LocalDateTime timestamp;
     private boolean edited = false;
     private boolean deleted = false;
     private LocalDateTime editedAt;
@@ -38,15 +38,16 @@ public class Message implements Serializable {
         this.timestamp = LocalDateTime.now();
     }
     public Message(String senderId, String receiverId, String content, MessageType messageType,
-                   byte[] mediaData, String mediaName, String mediaType) {
+                   String mediaName) {
         this(senderId, receiverId, content, messageType);
-        this.mediaData = mediaData;
         this.mediaName = mediaName;
-        this.mediaType = mediaType;
     }
 
     public UUID getMessageId() {
         return messageId;
+    }
+    public void setMessageId(UUID id) {
+        this.messageId = id;
     }
 
     public String getSenderId() {
@@ -68,6 +69,8 @@ public class Message implements Serializable {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+
+    public void serTimestamp(LocalDateTime l) { this.timestamp = l; }
 
     public byte[] getMediaData() {
         return mediaData;

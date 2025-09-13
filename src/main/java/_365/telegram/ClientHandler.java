@@ -1,5 +1,7 @@
 package _365.telegram;
 
+import _365.telegram.db.MessageDao;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -43,61 +45,64 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             Message firstMsg = (Message) in.readObject();
-
+//
             if (firstMsg.getMessageType() == Message.MessageType.REGISTER_PHONE) {
-                String phone = firstMsg.getSenderId();
-
-                if (server.isPhoneRegistered(phone)) {
-                    sendMessage(new Message("SERVER", phone,
-                            "Phone number already registered", Message.MessageType.LOGIN_RESPONSE));
-
-                    return;
-                }
-
-                String code = server.generateVerificationCode(phone);
-                sendMessage(new Message("SERVER", phone,
-                        code, Message.MessageType.LOGIN_RESPONSE));
-
-                Message codeMsg = (Message) in.readObject();
-                if (codeMsg.getMessageType() != Message.MessageType.VERIFY_CODE ||
-                        !server.verifyCode(phone, codeMsg.getContent())) {
-
-                    sendMessage(new Message("SERVER", phone,
-                            "Invalid verification code", Message.MessageType.LOGIN_RESPONSE));
-
-                    return;
-                }
-
-                Message profileMsg = (Message) in.readObject();
-                if (profileMsg.getMessageType() != Message.MessageType.SET_PROFILE) {
-                    sendMessage(new Message("SERVER", phone,
-                            "Invalid profile setup message", Message.MessageType.LOGIN_RESPONSE));
-
-                    return;
-                }
-
-                String[] profileParts = profileMsg.getContent().split("\\|");
-                String inputUsername = profileParts[0].trim();
-                String bio = profileParts.length > 1 ? profileParts[1].trim() : "";
-
-                User newUser = new User(UUID.randomUUID(), inputUsername, phone, bio, "");
-                newUser.setUsername(inputUsername);
-                newUser.setBio(bio);
-                newUser.setStatus("Online");
-
-                this.username = inputUsername;
-                server.registerUser(phone, newUser);
+                String username = firstMsg.getSenderId();
                 server.addOnlineUser(username, this);
-
-                sendMessage(new Message("SERVER", phone,
-                        "Registration complete! Welcome " + username, Message.MessageType.LOGIN_RESPONSE));
-                System.out.println("User registered: " + username + " (" + phone + ")");
-
-            } else {
-                sendMessage(new Message("SERVER", null,
-                        "Invalid initial request", Message.MessageType.SYSTEM));
-                return;
+                server.broadcast(new Message("SERVER", username, "Online users changed", Message.MessageType.PRIVATE));
             }
+//
+//                if (server.isPhoneRegistered(phone)) {
+//                    sendMessage(new Message("SERVER", phone,
+//                            "Phone number already registered", Message.MessageType.LOGIN_RESPONSE));
+//
+//                    return;
+//                }
+//
+//                String code = server.generateVerificationCode(phone);
+//                sendMessage(new Message("SERVER", phone,
+//                        code, Message.MessageType.LOGIN_RESPONSE));
+//
+//                Message codeMsg = (Message) in.readObject();
+//                if (codeMsg.getMessageType() != Message.MessageType.VERIFY_CODE ||
+//                        !server.verifyCode(phone, codeMsg.getContent())) {
+//
+//                    sendMessage(new Message("SERVER", phone,
+//                            "Invalid verification code", Message.MessageType.LOGIN_RESPONSE));
+//
+//                    return;
+//                }
+//
+//                Message profileMsg = (Message) in.readObject();
+//                if (profileMsg.getMessageType() != Message.MessageType.SET_PROFILE) {
+//                    sendMessage(new Message("SERVER", phone,
+//                            "Invalid profile setup message", Message.MessageType.LOGIN_RESPONSE));
+//
+//                    return;
+//                }
+//
+//                String[] profileParts = profileMsg.getContent().split("\\|");
+//                String inputUsername = profileParts[0].trim();
+//                String bio = profileParts.length > 1 ? profileParts[1].trim() : "";
+//
+//                User newUser = new User(UUID.randomUUID(), inputUsername, phone, bio, "");
+//                newUser.setUsername(inputUsername);
+//                newUser.setBio(bio);
+//                newUser.setStatus("Online");
+//
+//                this.username = inputUsername;
+//                server.registerUser(phone, newUser);
+//                server.addOnlineUser(username, this);
+//
+//                sendMessage(new Message("SERVER", phone,
+//                        "Registration complete! Welcome " + username, Message.MessageType.LOGIN_RESPONSE));
+//                System.out.println("User registered: " + username + " (" + phone + ")");
+//
+//            } else {
+//                sendMessage(new Message("SERVER", null,
+//                        "Invalid initial request", Message.MessageType.SYSTEM));
+//                return;
+//            }
 
             Message incoming;
             while ((incoming = (Message) in.readObject()) != null) {
@@ -531,6 +536,7 @@ public class ClientHandler implements Runnable {
 
                     case MEDIA:
                     case MEDIA_WITH_TEXT: {
+                        MessageDao.createMessage(incoming);
                         server.routeMessage(incoming);
                         if (incoming.getMediaData() != null) {
                             String filename = "received_" + incoming.getMediaName();
@@ -538,6 +544,7 @@ public class ClientHandler implements Runnable {
                         }
                         break;
                     }
+
 
                     default: {
 
@@ -550,6 +557,8 @@ public class ClientHandler implements Runnable {
             System.out.println("Disconnected: " + username);
         } finally {
             server.removeClient(this);
+            server.broadcast(new Message("SERVER", username, "Online users changed", Message.MessageType.PRIVATE));
+
             try {
                 socket.close();
             } catch (IOException e) {
