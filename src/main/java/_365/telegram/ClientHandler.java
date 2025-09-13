@@ -49,6 +49,7 @@ public class ClientHandler implements Runnable {
             if (firstMsg.getMessageType() == Message.MessageType.REGISTER_PHONE) {
                 String username = firstMsg.getSenderId();
                 server.addOnlineUser(username, this);
+                server.broadcast(new Message("SERVER", username, "Online users changed", Message.MessageType.PRIVATE));
             }
 //
 //                if (server.isPhoneRegistered(phone)) {
@@ -544,6 +545,7 @@ public class ClientHandler implements Runnable {
                         break;
                     }
 
+
                     default: {
 
                         break;
@@ -554,7 +556,9 @@ public class ClientHandler implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Disconnected: " + username);
         } finally {
-            //server.removeClient(this);
+            server.removeClient(this);
+            server.broadcast(new Message("SERVER", username, "Online users changed", Message.MessageType.PRIVATE));
+
             try {
                 socket.close();
             } catch (IOException e) {

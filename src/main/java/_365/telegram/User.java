@@ -53,8 +53,4 @@ public class User implements Serializable {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return username + " (" + phoneNumber + ")";
-    }
 }

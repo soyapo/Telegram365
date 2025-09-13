@@ -16,7 +16,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #0e1621;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="_365.telegram.MainController">
    <children>
-      <HBox fx:id="BigImageContainer" alignment="CENTER" onMousePressed="#HideBigImage" opacity="0.8" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #0e1621;">
+      <HBox fx:id="BigImageContainer" alignment="CENTER" onMousePressed="#HideBigImage" opacity="0.9" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #0e1621;">
          <children>
             <ImageView fx:id="BigImage" fitHeight="360.0" fitWidth="540.0" pickOnBounds="true" preserveRatio="true" />
          </children>
@@ -223,7 +223,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <TextField prefHeight="30.0" prefWidth="190.0" promptText="Search" style="-fx-background-radius: 15px; -fx-background-color: #242f3d;">
+                  <TextField fx:id="LeftBarSearchBox" prefHeight="30.0" prefWidth="190.0" promptText="Search" style="-fx-background-radius: 15px; -fx-background-color: #242f3d; -fx-text-fill: #ffffff;">
                      <font>
                         <Font name="Ebrima Bold" size="12.0" />
                      </font>
@@ -236,7 +236,7 @@
             <ListView fx:id="ChatListContainer" prefHeight="660.0" prefWidth="250.0" style="-fx-background-color: #17212b;" />
          </children>
       </VBox>
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="210.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="LeftBarSearchIcon" fitHeight="20.0" fitWidth="20.0" layoutX="210.0" layoutY="20.0" onMouseClicked="#SearchUser" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@media/Icons/search-12-32.png" />
          </image>
@@ -320,10 +320,10 @@
                         </HBox>
                      </children>
                   </HBox>
-                  <ListView prefHeight="610.0" prefWidth="530.0" style="-fx-background-color: null;" />
+                  <ListView fx:id="ChatList" prefHeight="610.0" prefWidth="530.0" style="-fx-background-color: null;" />
                   <HBox prefHeight="50.0" prefWidth="530.0" style="-fx-background-color: #17212b; -fx-border-color: #000000; -fx-border-width: 0.5;">
                      <children>
-                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ClipButton" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#PhotoPicker" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@media/Icons/attach-32.png" />
                            </image>
@@ -388,6 +388,9 @@
                            <HBox.margin>
                               <Insets bottom="15.0" left="20.0" top="15.0" />
                            </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                         <VBox prefHeight="150.0" prefWidth="170.0">
                            <children>

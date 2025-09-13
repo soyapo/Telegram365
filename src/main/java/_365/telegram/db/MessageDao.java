@@ -4,13 +4,14 @@ import _365.telegram.Message;
 import _365.telegram.Message.MessageType;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class MessageDao {
     public static void createMessage(Message message) {
-        String sql = "INSERT INTO messages (id, sender_id, chat_id, chat_type, content, reply_to_message_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO messages (id, sender_id, receiver_id, chat_type, content, reply_to, file_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -20,6 +21,7 @@ public class MessageDao {
             stmt.setObject(3, UUID.fromString(message.getReceiverId()));
             stmt.setString(4, getChatTypeString(message.getMessageType()));
             stmt.setString(5, message.getContent());
+            stmt.setString(7, message.getMediaName());
 
             if (message.getReplyToMessageId() != null) {
                 stmt.setObject(6, message.getReplyToMessageId());
@@ -34,16 +36,18 @@ public class MessageDao {
         }
     }
 
-    public static List<Message> getMessagesForChat(UUID chatId, int limit, int offset) {
+    public static List<Message> getMessagesForChat(UUID uuid1, UUID uuid2) {
         List<Message> messages = new ArrayList<>();
-        String sql = "SELECT * FROM messages WHERE chat_id = ? AND is_deleted = false ORDER BY timestamp DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM messages WHERE is_deleted = FALSE AND (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY timestamp ASC;";
+
+
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setObject(1, chatId);
-            stmt.setInt(2, limit);
-            stmt.setInt(3, offset);
+            stmt.setObject(1, uuid1);
+            stmt.setObject(2, uuid2);
+            stmt.setObject(3, uuid2);
+            stmt.setObject(4, uuid1);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -95,13 +99,18 @@ public class MessageDao {
     }
 
     private static Message mapResultSetToMessage(ResultSet rs) throws SQLException {
-        UUID id = (UUID) rs.getObject("id");
+        UUID messageId = (UUID) rs.getObject("id");
         UUID senderId = (UUID) rs.getObject("sender_id");
-        UUID chatId = (UUID) rs.getObject("chat_id");
+        UUID receiverId = (UUID) rs.getObject("receiver_id");
         String chatType = rs.getString("chat_type");
         String content = rs.getString("content");
-        UUID replyToId = (UUID) rs.getObject("reply_to_message_id");
+        UUID replyToId = (UUID) rs.getObject("reply_to");
         boolean isEdited = rs.getBoolean("is_edited");
+        boolean isDeleted = rs.getBoolean("is_deleted");
+        UUID forwardedFrom = (UUID) rs.getObject("forwarded_from");
+        LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+        LocalDateTime editedAt = (LocalDateTime) rs.getObject("edited_at");
+        String mediaName = rs.getString("file_path");
 
         MessageType messageType = switch (chatType) {
             case "private" -> MessageType.PRIVATE;
@@ -110,9 +119,10 @@ public class MessageDao {
             default -> MessageType.SYSTEM;
         };
 
-        Message message = new Message(senderId.toString(), chatId.toString(), content, messageType);
+        Message message = new Message(senderId.toString(), receiverId.toString(), content, messageType, mediaName);
         message.setReplyToMessageId(replyToId);
         message.setEdited(isEdited);
+        message.serTimestamp(timestamp);
 
         return message;
     }

@@ -77,6 +77,20 @@ public class UserDao {
         return null;
     }
 
+    public static String getPhoneByUsername(String username) {
+        String sql = "SELECT phone FROM users WHERE username = ?";
+        try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getObject("phone").toString();
+            }
+        } catch (SQLException e) {
+            System.err.println("getUserIdByPhone failed: " + e.getMessage());
+        }
+        return null;
+    }
+
     public static String getUserPhoneByID(UUID uuid) {
         String sql = "SELECT phone FROM users WHERE id = ?";
         try (PreparedStatement stmt = DatabaseManager.getConnection().prepareStatement(sql)) {

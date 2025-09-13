@@ -1,10 +1,10 @@
 package _365.telegram;
 
-import _365.telegram.db.ChatDao;
-import _365.telegram.db.ChatListItem;
-import _365.telegram.db.DatabaseManager;
-import _365.telegram.db.UserDao;
+import _365.telegram.db.*;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,8 +18,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import javax.sound.sampled.Clip;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +36,7 @@ public class MainController {
     User user;
     User RecUser;
     String CurrentChatType;
+    String MediaPath;
 
     private ClientSocketHandler CSH;
 
@@ -61,27 +71,7 @@ public class MainController {
         }
 
         // -- Chatlist --
-        List<ChatListItem> ActiveChats = ChatDao.getChatListForUser(user.getUserId());
-        ChatListContainer.setStyle("-fx-background-color: #17212b;");
-
-        if(ChatListContainer != null){
-            ChatListContainer.getItems().setAll(ActiveChats);
-
-            ChatListContainer.setCellFactory(listView -> new ListCell<>() {
-                @Override
-                protected void updateItem(ChatListItem chat, boolean empty) {
-                    super.updateItem(chat, empty);
-
-                    if (empty || chat == null) {
-                        setGraphic(null);
-                        setText(null);
-                    } else {
-                        setGraphic(GenerateChatBox(chat));
-                        setPadding(Insets.EMPTY); // no gaps // use your HBox generator
-                    }
-                }
-            });
-        }
+        UpdateChatBox();
 
         // --centerbar init--
 
@@ -94,6 +84,62 @@ public class MainController {
                 SendMicButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/telegram-32.png").toExternalForm()));
         });
 
+
+        ChatList.setCellFactory(lv -> new ListCell<Message>() {
+            @Override
+            protected void updateItem(Message msg, boolean empty) {
+                super.updateItem(msg, empty);
+                setBackground(Background.EMPTY); // make cell transparent
+                setStyle("-fx-background-color: transparent;");
+
+                if (empty || msg == null) {
+                    setGraphic(null);
+                } else {
+                    VBox bubble = new VBox();
+                    bubble.setPrefWidth(260);
+                    bubble.setMaxWidth(260);
+
+                    Label content = new Label(msg.getContent());
+                    content.setStyle("-fx-font-family: Ebrima; -fx-font-size: 14px;");
+                    content.setWrapText(true);
+                    bubble.getChildren().add(content);
+
+                    LocalDateTime dt = msg.getTimestamp();
+                    Label time = new Label(String.format("%02d:%02d", dt.getHour(), dt.getMinute()));
+                    time.setStyle("-fx-font-family: Ebrima; -fx-font-size: 9px; -fx-padding: 10 0 0 220;");
+                    bubble.getChildren().add(time);
+
+                    if(msg.getMediaName() != null){
+                        ImageView image = new ImageView(new Image("file:src/main/java/_365/telegram/Media/Sent/" + msg.getMediaName()));
+                        image.setFitWidth(260);
+                        image.setFitHeight(260);
+                        image.setOnMouseClicked(e -> {ShowBigImage("file:src/main/java/_365/telegram/Media/Sent/" + msg.getMediaType());});
+                        bubble.getChildren().add(image);
+                    }
+
+                    // align left or right
+                    HBox wrapper = new HBox(bubble);
+                    if (msg.getSenderId().equals(user.getUserId().toString())) {
+                        wrapper.setAlignment(Pos.CENTER_RIGHT);
+                        bubble.setStyle("-fx-background-color: lightblue; -fx-padding: 8; -fx-background-radius: 10;");
+                    } else {
+                        wrapper.setAlignment(Pos.CENTER_LEFT);
+                        bubble.setStyle("-fx-background-color: lightgray; -fx-padding: 8; -fx-background-radius: 10;");
+                    }
+
+                    setGraphic(wrapper);
+                }
+            }
+        });
+
+        ChatList.setItems(messagesObservableList);
+
+        messagesObservableList.addListener((ListChangeListener<Message>) change -> {
+            ChatList.scrollTo(messagesObservableList.size() - 1);
+        });
+
+
+
         clip = new Circle(60, 60, 60);
         InfoBarProfile.setClip(clip);
         InfoBarProfile.setOnMouseClicked(e -> {ShowBigImage("file:src/main/java/_365/telegram/Media/Profiles/" + RecUser.getProfilePath());});
@@ -104,9 +150,24 @@ public class MainController {
     }
 
     private void handleIncomingMessage(Message msg) {
+
         // Always update UI on JavaFX thread
         Platform.runLater(() -> {
+            if(msg.getContent() == "Online users changed") {
+                ClientHandler target = Server.onlineUsers.get(RecUser.getUsername());
+                if(target != null) {
+                    InfoBarStatus.setText("Online");
+                    CenterBarStatus.setText("Online");
+                }
+                else{
+                    InfoBarStatus.setText("Offline");
+                    CenterBarStatus.setText("Offline");
+                }
+                return;
+            }
             System.out.println(msg.getSenderId() + ": " + msg.getContent());
+            messagesObservableList.add(new Message(msg.getSenderId(), msg.getReceiverId(), msg.getContent(), Message.MessageType.PRIVATE));
+            UpdateChatBox();
         });
     }
 
@@ -192,6 +253,21 @@ public class MainController {
         BigImageContainer.toBack();
     }
 
+    @FXML TextField LeftBarSearchBox;
+    @FXML ImageView LeftBarSearchIcon;
+
+    @FXML private void SearchUser(){
+        DatabaseManager.connect();
+
+        String username = LeftBarSearchBox.getText();
+        if(UserDao.usernameExists(username))
+            ShowChat(UserDao.getPhoneByUsername(username));
+
+        DatabaseManager.close();
+    }
+
+
+
     // --center bar--
     @FXML HBox ChatBars;
     @FXML VBox CenterBar;
@@ -224,8 +300,25 @@ public class MainController {
         InfoBarUsername2.setText("@" + RecUser.getUsername());
         InfoBarProfile.setImage(new Image("file:src/main/java/_365/telegram/Media/Profiles/" + Phone + ".png"));
 
+        ListMessages();
+
         ChatBars.setVisible(true);
         DatabaseManager.close();
+    }
+
+
+    @FXML ListView<Message> ChatList;
+    private ObservableList<Message> messagesObservableList = FXCollections.observableArrayList();
+
+    @FXML private void ListMessages(){
+        DatabaseManager.connect();
+        List<Message> messages = MessageDao.getMessagesForChat(user.getUserId(), RecUser.getUserId());
+
+        messagesObservableList.clear();
+        messagesObservableList.addAll(messages);
+        if (!messagesObservableList.isEmpty()) {
+            ChatList.scrollTo(messagesObservableList.size() - 1);
+        }
     }
 
     @FXML private void SendMessage(){
@@ -234,11 +327,83 @@ public class MainController {
         if(Content.isEmpty())
             return;
 
+        messagesObservableList.add(new Message(user.getUserId().toString(), RecUser.getUserId().toString(), Content, Message.MessageType.PRIVATE));
         CSH.sendMessage(new Message(user.getUsername(), RecUser.getUsername(), Content, Message.MessageType.PRIVATE));
 
+        DatabaseManager.connect();
+        if(MediaPath != null)
+            MessageDao.createMessage(new Message(user.getUserId().toString(), RecUser.getUserId().toString(), Content, Message.MessageType.PRIVATE, MediaPath));
+        else
+            MessageDao.createMessage(new Message(user.getUserId().toString(), RecUser.getUserId().toString(), Content, Message.MessageType.PRIVATE));
+        UpdateChatBox();
+
+        SendMicButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/microphone-8-32.png").toExternalForm()));
+
         MessageBox.setText(null);
+        MediaPath = null;
+        ClipButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/attach-32.png").toExternalForm()));
     }
 
+    @FXML void UpdateChatBox() {
+        DatabaseManager.connect();
+        List<ChatListItem> ActiveChats = ChatDao.getChatListForUser(user.getUserId());
+        ChatListContainer.setStyle("-fx-background-color: #17212b;");
 
+        if (ChatListContainer != null) {
+            ChatListContainer.getItems().setAll(ActiveChats);
 
+            ChatListContainer.setCellFactory(listView -> new ListCell<>() {
+                @Override
+                protected void updateItem(ChatListItem chat, boolean empty) {
+                    super.updateItem(chat, empty);
+                    setBackground(Background.EMPTY); // make cell transparent
+                    setStyle("-fx-background-color: transparent;");
+
+                    if (empty || chat == null) {
+                        setGraphic(null);
+                        setText(null);
+                    } else {
+                        setGraphic(GenerateChatBox(chat));
+                        setPadding(Insets.EMPTY); // no gaps // use your HBox generator
+                    }
+                }
+            });
+        }
+        DatabaseManager.close();
+    }
+
+    @FXML ImageView ClipButton;
+
+    @FXML private void PhotoPicker(){
+        FileChooser picker = new FileChooser();
+        picker.setTitle("Select an image for your profile picture");
+        picker.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+
+        Stage stage = (Stage) CenterBar.getScene().getWindow();
+        File pfp = picker.showOpenDialog(stage);
+        Path destinationDir = Path.of("src/main/java/_365/telegram/Media/Sent");
+
+        if (pfp != null) {
+            if (pfp.length() > 10 * 1024 * 1024) {
+                ClipButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/red.png").toExternalForm()));
+            } else {
+                try{
+                    String DateForString = LocalDateTime.now().toString().replace(":", "");
+                    Path destination = destinationDir.resolve(DateForString + ".png");
+                    Files.copy(pfp.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+                    MediaPath = DateForString + ".png";
+
+                    ClipButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/green.png").toExternalForm()));
+                }
+                catch (IOException e) {
+                    System.out.println("IOException: " + e);
+                }
+            }
+        } else {
+            ClipButton.setImage(new Image(getClass().getResource("/_365/telegram/media/Icons/red.png").toExternalForm()));
+        }
+    }
 }
